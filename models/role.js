@@ -6,7 +6,7 @@ module.exports = (sequelize, DataTypes) => { //appel sequelize
   {timestamps: false},
    {});
   Role.associate = function(models) {
-    models.Role.hasMany(models.User) //association des users et des posts
+    /*models.Role.hasMany(models.User)*/ //association des users et des posts
   };
   return Role;
 };

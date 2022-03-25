@@ -14,7 +14,7 @@ exports.signup = (req,res) =>{
 			office_id:1
 			}
 		)
-		.then(result => res.send(result))
+		.then(result => res.status(200).json(result))
 		.catch(error => {
 			let name = error.name
 			if (name === 'SequelizeUniqueConstraintError')
@@ -74,6 +74,15 @@ exports.userProfilById = (req, res) => {
         //include: Model.company // Left join // Faire une seule requete
     })
     .then(user => user!=null ? res.status(200).json(user) : res.status(400).json({error:'User doesn\'t exist'}))
+    .catch(error => res.status(500).json(error))
+};
+
+exports.userProfils = (req, res) => {
+    models.User.findAll({
+        attributes: ['id', 'email', 'user_name','bio','office_id'],
+        //include: Model.company // Left join // Faire une seule requete
+    })
+    .then(user => res.status(200).json(user))
     .catch(error => res.status(500).json(error))
 };
 

@@ -26,9 +26,7 @@ module.exports = (sequelize, DataTypes) => { //appel sequelize
         name:'office_id'
       },
     });
-
-    models.User.hasMany(models.Posts) //association des users et des posts
-    models.User.hasMany(models.Topic)
+   /* models.User.hasMany(models.Posts)*/
   };
   return User;
 };

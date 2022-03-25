@@ -1,10 +1,10 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
   const Posts = sequelize.define('Posts', {
-    title: DataTypes.STRING,
     topic: DataTypes.STRING,
     content: DataTypes.STRING,
     attachement: DataTypes.STRING,
+    moderated: DataTypes.INTEGER,
     likes: DataTypes.INTEGER,
   },
   {timestamps: false},
@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
         name:'creator_id'
       }
     });
-    models.Posts.belongsToMany(models.Office,{through:'post_has_office'})
+    models.Posts.belongsToMany(models.Office,{through:'post_has_office',foreignKey:'office_id'})
   };
   return Posts;
 };

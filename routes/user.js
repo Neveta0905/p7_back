@@ -9,6 +9,7 @@ router.post('/login',userCtrl.login) // Log In
 
 router.get('/profile',auth.all,userCtrl.userProfil)
 router.get('/profile/:id',auth.all,userCtrl.userProfilById)
+router.get('/profiles',auth.all,userCtrl.userProfils)
 
 router.put('/profile',auth.all,userCtrl.userModif)
 router.put('/profile/:id',auth.admin,userCtrl.moderate)

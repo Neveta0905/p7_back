@@ -34,9 +34,13 @@ app.use(helmet());
 const userRouter = require('./routes/user')
 app.use('/api/auth',userRouter)
 
-// Import User Router
-const messageRouter = require('./routes/message')
-app.use('/api/messages',messageRouter)
+// Import Office Router
+const officeRouter = require('./routes/office')
+app.use('/api/office',officeRouter)
+
+// Import Office Router
+const postRouter = require('./routes/post')
+app.use('/api/post',postRouter)
 
 // Export app to server
 module.exports = app

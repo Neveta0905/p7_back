@@ -25,8 +25,8 @@ exports.admin = (req, res, next) => { // Faut envoyer authorization : token + ro
     const userId = decodedToken.userId.toString();
     const userRole = req.body.role
     req.auth = { userId }
-    if (req.body.userId && req.body.userId !== userId || userRole != 2) {
-      throw 'Invalid user ID';
+    if (userRole != 2) {
+      throw 'Need Administrator access';
     } else {
       next();
     }
