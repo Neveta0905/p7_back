@@ -16,7 +16,6 @@ module.exports = (sequelize, DataTypes) => {
         name:'creator_id'
       }
     });
-    models.Posts.belongsToMany(models.Office,{through:'post_has_office',foreignKey:'office_id'})
   };
   return Posts;
 };

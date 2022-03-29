@@ -10,22 +10,11 @@ module.exports = (sequelize, DataTypes) => { //appel sequelize
     bio: DataTypes.STRING,
     moderated: DataTypes.INTEGER,
     user_name: DataTypes.STRING,
+    role: DataTypes.INTEGER
   },
   {timestamps: false}
   , {});
   User.associate = function(models) {
-    models.User.belongsTo(models.Role, {
-      foreignKey: { //application clé étrangère posée sur la table
-        allowNull: false,
-        name:'role_id'
-      }
-    });
-    models.User.belongsTo(models.Office, {
-      foreignKey: { //application clé étrangère posée sur la table
-        allowNull: false,
-        name:'office_id'
-      },
-    });
    /* models.User.hasMany(models.Posts)*/
   };
   return User;

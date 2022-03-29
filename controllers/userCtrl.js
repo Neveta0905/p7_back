@@ -10,8 +10,7 @@ exports.signup = (req,res) =>{
 			email:req.body.email,
 			password:hash,
 			user_name: req.body.user_name,
-			role_id:1,
-			office_id:1
+			role:1,
 			}
 		)
 		.then(result => res.status(200).json(result))
@@ -28,29 +27,33 @@ exports.signup = (req,res) =>{
 
 exports.login = (req,res) =>{
 	models.User.findOne({
-		attributes: ['id','password','role_id'],
+		attributes: ['id','password','role','moderated'],
 		where: {email: req.body.email}
 	})
 	.then(user => {
 		if(!user){
-			return res.status(401).json({error:'Wrong Id'})
+			return res.status(401).json({error:'Wrong mail'})
 		}
 		bcrypt.compare(req.body.password,user.password)
 		.then(valid =>{
 			if(!valid){
-				return res.status(401).json({error:valid})
+				return res.status(401).json(error)
 			}
-			res.status(200).json({
-				userId:user.id,
-				token: jwt.sign( // User Id gardé cypté en front
-					{ userId: user.id},
-					'RANDOM_TOKEN_SECRET',
-					{ expiresIn:'24h'}
-				),
-				role: user.role_id
-			})
+			if (user.moderated === 0)
+				res.status(403).json({message:'Wait for your account\'s validation'})
+			else{
+				res.status(200).json({
+					userId:user.id,
+					token: jwt.sign( // User Id gardé cypté en front
+						{ userId: user.id},
+						'RANDOM_TOKEN_SECRET',
+						{ expiresIn:'24h'}
+					),
+					role: user.role
+				})
+			}
 		})
-		.catch(error => res.status(500).json(error))
+		.catch(error => res.status(500).json({error:'Wrong password'}))
 	})
 	.catch(error => res.status(500).json(error))
 }
@@ -60,7 +63,6 @@ exports.userProfil = (req, res) => {
     models.User.findOne({
         attributes: ['id', 'email', 'user_name','bio'],
         where: { id: id},
-        include: [models.Office,models.Role] // Left join // Faire une seule requete
     })
     .then(user => res.status(200).json(user))
     .catch(error => res.status(500).json(error))
@@ -69,7 +71,7 @@ exports.userProfil = (req, res) => {
 exports.userProfilById = (req, res) => {
     let id = req.params.id
     models.User.findOne({
-        attributes: ['id', 'email', 'user_name','bio','office_id'],
+        attributes: ['id', 'email', 'user_name','bio'],
         where: { id: id},
         //include: Model.company // Left join // Faire une seule requete
     })
@@ -79,7 +81,7 @@ exports.userProfilById = (req, res) => {
 
 exports.userProfils = (req, res) => {
     models.User.findAll({
-        attributes: ['id', 'email', 'user_name','bio','office_id'],
+        attributes: ['id', 'email', 'user_name','bio'],
         //include: Model.company // Left join // Faire une seule requete
     })
     .then(user => res.status(200).json(user))
@@ -99,7 +101,6 @@ exports.userModif = async (req,res) => {
 			password:new_password,
 			user_name:req.body.user_name,
 			bio:req.body.bio,
-			office_id:req.body.office_id
 		},
         {where:{id:id}}
 	)
@@ -114,7 +115,6 @@ exports.moderate = (req,res) =>{
 		user_name:req.body.user_name,
 		bio:req.body.bio,
 		role_id:req.body.role_id,
-		office_id:req.body.office_id
 	},
 	{
 		where:{id:req.params.id}

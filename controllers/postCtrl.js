@@ -9,10 +9,21 @@ exports.getAll = (req,res) => {
 		include:[
 			{
 				model:models.User,
-				include:[
-					{model:models.Office,attributes:{exclude:['id']}},
-					{model:models.Role,attributes:{exclude:['id']}}
-				],
+				attributes:['user_name']
+			}
+		]
+	})
+	.then(result => res.status(200).json(result))
+	.catch(error => res.status(500).json(error))
+}
+
+exports.getOne = (req,res) => {
+	let id = req.params.id
+	models.Posts.findOne({
+		where: {id:id},
+		include:[
+			{
+				model:models.User,
 				attributes:['user_name']
 			}
 		]
@@ -30,17 +41,7 @@ exports.create = (req,res) => {
         likes: 0,
         creator_id: req.body.userId,
 	})
-	.then(post => {
-		let office_id
-		req.body.office_id!=undefined ? office_id = req.body.office_id : office_id = 1
-
-		models.Post_has_Office.create({
-			offices_id:office_id,
-			posts_id:post.id
-		})
-		.then(result=>res.status(200).json({message:'Post created'}))
-		.catch(error => res.status(500).json(error))
-	})
+	.then(post => {result=>res.status(200).json({message:'Post created'})})
 	.catch(error => res.status(500).json(error))
 }
 
