@@ -18,9 +18,9 @@ exports.signup = (req,res) =>{
 		.catch(error => {
 			let name = error.name
 			if (name === 'SequelizeUniqueConstraintError')
-				res.status(400).send({error:'Mail already registered'})
+				return res.status(400).json({error:'Mail already registered'})
 			else
-				res.status(400).send(error)
+				return res.status(400).json(error)
 		})
 	})
 	.catch((error) => res.status(500).json(error))
