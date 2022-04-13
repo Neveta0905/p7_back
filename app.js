@@ -3,6 +3,7 @@ const helmet = require("helmet");
 const bodyParser = require('body-parser')
 const path = require('path');
 const Sequelize = require('sequelize')
+const morgan = require('morgan')('dev')
 
 // Dotenv to config port
 const dotenv = require("dotenv");
@@ -14,7 +15,7 @@ const app = express()
 const tester = require('./models/index.js')
 // Use middleware
 app.use(express.json()) // for parsing application/json
-
+app.use(morgan)
 app.use(express.urlencoded({ extended: true }))
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
@@ -28,7 +29,6 @@ app.use((req, res, next) => {
   next();
 });
 app.use(helmet());
-
 
 // Import User Router
 const userRouter = require('./routes/user')

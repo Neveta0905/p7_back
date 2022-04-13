@@ -22,6 +22,18 @@ exports.getOne = (req,res) => {
 	.catch(error=>res.status(400).json(error))
 }
 
+exports.getToModerate = (req,res) => {
+	models.Comment.findAll({
+		where:{moderated:0},
+		include:[
+			{model:models.Posts,attributes:['content']},
+			{model:models.User,attributes:['user_name']}
+		]
+	})
+	.then(result => res.status(200).json(result))
+	.catch(error => res.status(500).json(error))
+}
+
 exports.send = (req,res) => {
 	models.Comment.create({
 		content:req.body.content,
@@ -32,11 +44,9 @@ exports.send = (req,res) => {
 	.catch(error => res.status(400).json(error))
 }
 
-exports.modify = (req,res) => {
+exports.moderate = (req,res) => {
 	models.Comment.update({
-		content:req.body.content,
-		posts_id: req.body.posts_id,
-		users_id : req.body.user_id
+		moderated:1
 	},{
 		where:{id:req.params.id}
 	})

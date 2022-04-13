@@ -15,7 +15,10 @@ module.exports = (sequelize, DataTypes) => { //appel sequelize
   {timestamps: false}
   , {});
   User.associate = function(models) {
-   /* models.User.hasMany(models.Posts)*/
+    models.User.hasMany(models.Comment,{
+      foreignKey:
+      {name:'users_id'}
+    })
   };
   return User;
 };

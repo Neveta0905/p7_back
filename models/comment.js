@@ -2,6 +2,7 @@
 module.exports = (sequelize, DataTypes) => { //appel sequelize
   const Comment = sequelize.define('Comment', {
     content: DataTypes.STRING,
+    moderated: {type: DataTypes.INTEGER, defaultValue: 0},
   },
   {timestamps: false}
   , {});
@@ -12,6 +13,7 @@ module.exports = (sequelize, DataTypes) => { //appel sequelize
         name: 'users_id'
       }
     })
+    
     models.Comment.belongsTo(models.Posts,{
       foreignKey: {
         allowNull: false,

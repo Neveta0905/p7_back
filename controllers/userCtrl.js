@@ -13,7 +13,7 @@ exports.signup = (req,res) =>{
 			role:1,
 			}
 		)
-		.then(result => res.status(200).json(result))
+		.then(result => res.status(200).json({message:'Account created'}))
 		.catch(error => {
 			let name = error.name
 			if (name === 'SequelizeUniqueConstraintError')
@@ -45,7 +45,10 @@ exports.login = (req,res) =>{
 				res.status(200).json({
 					userId:user.id,
 					token: jwt.sign( // User Id gardé cypté en front
-						{ userId: user.id},
+						{ 
+							userId: user.id,
+							userRole: user.role
+						},
 						'RANDOM_TOKEN_SECRET',
 						{ expiresIn:'24h'}
 					),
@@ -81,8 +84,17 @@ exports.userProfilById = (req, res) => {
 
 exports.userProfils = (req, res) => {
     models.User.findAll({
-        attributes: ['id', 'email', 'user_name','bio'],
-        //include: Model.company // Left join // Faire une seule requete
+        attributes: ['id', 'email', 'user_name','bio','role'],
+        where:{moderated:1}
+    })
+    .then(user => res.status(200).json(user))
+    .catch(error => res.status(500).json(error))
+};
+
+exports.userToModerate = (req, res) => {
+    models.User.findAll({
+        attributes:{exclude:['password']},
+        where:{moderated:0}
     })
     .then(user => res.status(200).json(user))
     .catch(error => res.status(500).json(error))
@@ -98,7 +110,7 @@ exports.userModif = async (req,res) => {
 	models.User.update(
 		{
 			email:req.body.email,
-			password:new_password,
+			/*password:new_password,*/
 			user_name:req.body.user_name,
 			bio:req.body.bio,
 		},
@@ -111,10 +123,8 @@ exports.userModif = async (req,res) => {
 exports.moderate = (req,res) =>{
 	models.User.update(
 	{
-		moderated: req.body.moderated,
-		user_name:req.body.user_name,
-		bio:req.body.bio,
-		role_id:req.body.role_id,
+		moderated: 1,
+		role:req.body.role
 	},
 	{
 		where:{id:req.params.id}
@@ -144,11 +154,8 @@ exports.selfDelete = (req,res) => {
 	.catch(error => res.status(500).json(error))
 }
 
-// OP or and or
-/*models.User.findAll({
-attributes: ['id', 'user_name','role','password','office','bio'],
-where:{ [Op.or]:[
-  	{ id: '1'},
-  	{email:'efef@free.fr'}
-]
-	}*/
+exports.Count = (req,res) => {
+	models.User.count()
+	.then(result => res.status(200).json({message:result}))
+	.catch(error => res.status(400).json(eror))
+}
